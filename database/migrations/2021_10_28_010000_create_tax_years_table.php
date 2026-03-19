@@ -4,21 +4,21 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateTaxYearsTable extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      *
      * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::create('tax_years', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
-            $table->softDeletes();
 
             $table->year('start_year')->unique();
+
+            $table->timestamps();
+            $table->softDeletes();
         });
     }
 
@@ -27,8 +27,8 @@ class CreateTaxYearsTable extends Migration
      *
      * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('tax_years');
     }
-}
+};

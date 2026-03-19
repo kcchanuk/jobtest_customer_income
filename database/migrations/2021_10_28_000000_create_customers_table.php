@@ -4,21 +4,18 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateCustomersTable extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      *
      * @return void
      */
-    public function up()
+    public function up(): void
     {
         // Customers need the fields:
         // name (required), email (required), utr (required), dob, phone and profile pic
         Schema::create('customers', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
-            $table->softDeletes();
 
             $table->string('name');
             $table->string('email')->unique();
@@ -26,6 +23,9 @@ class CreateCustomersTable extends Migration
             $table->date('dob')->nullable();
             $table->string('phone')->unique()->nullable();
             $table->string('profile_pic_filename')->unique()->nullable();
+
+            $table->timestamps();
+            $table->softDeletes();
         });
     }
 
@@ -34,8 +34,8 @@ class CreateCustomersTable extends Migration
      *
      * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('customers');
     }
-}
+};
