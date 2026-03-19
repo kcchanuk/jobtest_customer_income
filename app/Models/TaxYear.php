@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class TaxYear extends Model
@@ -12,29 +14,64 @@ class TaxYear extends Model
     protected $fillable = ['start_year'];
 
     // Relationships
-    public function incomes()
+
+    /**
+     * One-to-many relationship with Incomes
+     *
+     * @return HasMany
+     */
+    public function incomes(): HasMany
     {
         return $this->hasMany(Income::class);
     }
 
     // Attributes
-    public function getTaxYearStringAttribute()
+
+    /**
+     * Return tax year string e.g. 2025/26
+     *
+     * @return Attribute
+     */
+    protected function taxYearString(): Attribute
     {
-        return $this->start_year . '/' . $this->end_year;
+        return Attribute::make(
+            get: fn() => $this->start_year . '/' . $this->end_year
+        );
     }
 
-    public function getEndYearAttribute()
+    /**
+     * Return the end year of the tax year
+     *
+     * @return Attribute
+     */
+    protected function endYear(): Attribute
     {
-        return $this->start_year + 1;
+        return Attribute::make(
+            get: fn() => $this->start_year + 1
+        );
     }
 
-    public function getStartDateAttribute()
+    /**
+     * Return start date of the tax year
+     *
+     * @return Attribute
+     */
+    protected function startDate(): Attribute
     {
-        return $this->start_year . '-04-06';
+        return Attribute::make(
+            get: fn() => $this->start_year . '-04-06'
+        );
     }
 
-    public function getEndDateAttribute()
+    /**
+     * Return end date of the tax year
+     *
+     * @return Attribute
+     */
+    protected function endDate(): Attribute
     {
-        return $this->end_year . '-04-05';
+        return Attribute::make(
+            get: fn() => $this->end_year . '-04-05'
+        );
     }
 }

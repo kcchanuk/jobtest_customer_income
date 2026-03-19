@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -20,27 +22,45 @@ class Customer extends Model
     protected $appends = ['profile_pic_url'];
 
     // Relationships
-    public function incomes()
+
+    /**
+     * One-to-many relationship with Incomes
+     *
+     * @return HasMany
+     */
+    public function incomes(): HasMany
     {
         return $this->hasMany(Income::class);
     }
 
     // Attributes
-    public function getProfilePicUrlAttribute()
+
+    /**
+     * Get profile pic URL or return null
+     *
+     * @return Attribute
+     */
+    protected function profilePicUrl(): Attribute
     {
-        if (!empty($this->profile_pic_filename)) {
-            // A symbolic link "public/storage" which points to the "storage/app/public" directory
-            // is assumed to be created already
-            // Storage path convention is "customers/{customer_id}/{profile_pic_filename}
-            // e.g. "customers/8/filename.jpg"
-            return Storage::url('customers/' . $this->id . '/' . $this->profile_pic_filename);
-        } else {
-            return null;
-        }
+        return Attribute::make(
+            get: fn() => !empty($this->profile_pic_filename) ?
+                // A symbolic link "public/storage" which points to the "storage/app/public" directory
+                // is assumed to be created already
+                // Storage path convention is "customers/{customer_id}/{profile_pic_filename}
+                // e.g. "customers/8/filename.jpg"
+                Storage::url('customers/' . $this->id . '/' . $this->profile_pic_filename) : null
+        );
     }
 
     // Non-static Functions
-    public function storeProfilePic(UploadedFile $file)
+
+    /**
+     * Store profile pic
+     *
+     * @param UploadedFile $file
+     * @return true
+     */
+    public function storeProfilePic(UploadedFile $file): bool
     {
         // Get random profile pic filename
         $filename = static::getRandomProfilePicFilename($file->extension());
@@ -57,7 +77,14 @@ class Customer extends Model
     }
 
     // Static Functions
-    public static function getRandomProfilePicFilename(string $extension)
+
+    /**
+     * Generate random profile pic filename
+     *
+     * @param string $extension
+     * @return string
+     */
+    public static function getRandomProfilePicFilename(string $extension): string
     {
         do {
             $filename = Str::random(40) . '.' . $extension;

@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Str;
@@ -20,37 +22,67 @@ class Income extends Model
     protected $appends = ['tax_year_string', 'income_file_url'];
 
     // Relationships
-    public function customer()
+
+    /**
+     * Many-to-one relationship with Customer
+     *
+     * @return BelongsTo
+     */
+    public function customer(): BelongsTo
     {
         return $this->belongsTo(Customer::class);
     }
 
-    public function tax_year()
+    /**
+     * Many-to-one relationship with Tax year
+     *
+     * @return BelongsTo
+     */
+    public function tax_year(): BelongsTo
     {
         return $this->belongsTo(TaxYear::class);
     }
 
     // Attributes
-    public function getIncomeFileUrlAttribute()
+
+    /**
+     * Get income file URL or return null
+     *
+     * @return Attribute
+     */
+    protected function incomeFileUrl(): Attribute
     {
-        if (!empty($this->income_filename)) {
-            // A symbolic link "public/storage" which points to the "storage/app/public" directory
-            // is assumed to be created already
-            // Storage path convention is "customers/{customer_id}/incomes/{profile_pic_filename}
-            // e.g. "customers/8/incomes/filename.jpg"
-            return Storage::url('customers/' . $this->id . '/incomes/' . $this->income_filename);
-        } else {
-            return null;
-        }
+        return Attribute::make(
+            get: fn() => !empty($this->income_filename) ?
+                // A symbolic link "public/storage" which points to the "storage/app/public" directory
+                // is assumed to be created already
+                // Storage path convention is "customers/{customer_id}/incomes/{profile_pic_filename}
+                // e.g. "customers/8/incomes/filename.jpg"
+                Storage::url('customers/' . $this->id . '/incomes/' . $this->income_filename) : null
+        );
     }
 
-    public function getTaxYearStringAttribute()
+    /**
+     * Return tax year string e.g. 2025/26
+     *
+     * @return Attribute
+     */
+    protected function taxYearString(): Attribute
     {
-        return $this->tax_year->tax_year_string;
+        return Attribute::make(
+            get: fn() => $this->tax_year->tax_year_string
+        );
     }
 
     // Non-static Functions
-    public function storeIncomeFile(UploadedFile $file)
+
+    /**
+     * Store income file
+     *
+     * @param UploadedFile $file
+     * @return true
+     */
+    public function storeIncomeFile(UploadedFile $file): bool
     {
         // Get random income filename
         $filename = static::getRandomIncomeFilename($file->extension());
@@ -67,6 +99,13 @@ class Income extends Model
     }
 
     // Static Functions
+
+    /**
+     * Generate random income filename
+     *
+     * @param string $extension
+     * @return string
+     */
     public static function getRandomIncomeFilename(string $extension)
     {
         do {
