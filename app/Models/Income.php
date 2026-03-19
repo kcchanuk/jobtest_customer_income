@@ -17,7 +17,7 @@ class Income extends Model
 
     protected $fillable = ['description', 'amount', 'income_date', 'income_filename'];
 
-    protected $visible = ['id', 'description', 'amount', 'income_date', 'tax_year_string', 'income_file_url'];
+    protected $visible = ['id', 'description', 'amount', 'income_date', 'tax_year_string', 'income_file_url', 'customer_id'];
 
     protected $appends = ['tax_year_string', 'income_file_url'];
 

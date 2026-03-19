@@ -20,7 +20,8 @@ class IncomeResource extends JsonResource
             'amount' => $this->amount,
             'income_date' => $this->income_date,
             'tax_year' => $this->tax_year_string,
-            'income_file_url' => $this->income_file_url
+            'income_file_url' => $this->income_file_url,
+            'customer_id' => $this->customer_id
         ];
         // Assume there is no need to return related customer
     }
