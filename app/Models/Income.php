@@ -58,7 +58,7 @@ class Income extends Model
                 // is assumed to be created already
                 // Storage path convention is "customers/{customer_id}/incomes/{profile_pic_filename}
                 // e.g. "customers/8/incomes/filename.jpg"
-                Storage::url('customers/' . $this->id . '/incomes/' . $this->income_filename) : null
+                Storage::url('customers/' . $this->customer_id . '/incomes/' . $this->income_filename) : null
         );
     }
 
@@ -89,7 +89,7 @@ class Income extends Model
 
         // Store the income file
         // It is standardized to store in "incomes" folder under the folder named after the customer ID
-        $file->storeAs('public/customers/' . $this->id . '/incomes', $filename);
+        $file->storeAs('public/customers/' . $this->customer_id . '/incomes', $filename);
 
         // save the income filename
         $this->income_filename = $filename;
