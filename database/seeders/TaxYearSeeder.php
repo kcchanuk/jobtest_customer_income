@@ -12,7 +12,7 @@ class TaxYearSeeder extends Seeder
      *
      * @return void
      */
-    public function run()
+    public function run(): void
     {
         // Generate tax year from 2021/2022 to 2030/2031
         for ($i = 2021; $i < 2031; $i++) {
