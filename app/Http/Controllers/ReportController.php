@@ -3,11 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ReportRequest;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 
 class ReportController extends Controller
 {
-    public function index(ReportRequest $request)
+    /**
+     * Generate report through SQL as required by the task
+     *
+     * @param ReportRequest $request
+     * @return JsonResponse
+     */
+    public function index(ReportRequest $request): JsonResponse
     {
         // For all queries, it must be soft-deleted so "deleted_at" column is null
 
@@ -54,6 +61,6 @@ class ReportController extends Controller
                 ->get();
         }
 
-        return response()->json($customers, 200);
+        return response()->json($customers);
     }
 }
